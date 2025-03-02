@@ -52,7 +52,7 @@ where
     Ok(serde_json::from_str(&line)?)
 }
 
-async fn handle_link(server_addr: &str, code: &str) -> Result<(String, String), MineChatError> {
+pub async fn handle_link(server_addr: &str, code: &str) -> Result<(String, String), MineChatError> {
     let client_uuid = Uuid::new_v4().to_string();
     info!("Connecting to server {}", server_addr);
 

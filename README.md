@@ -93,4 +93,4 @@ Contributions are welcome! Please open an issue or submit a pull request.
 
 ## Contact
 
-For any questions or support, please open an issue on the [GitHub repository](https://github.com/walker84837/minechat).
+For any questions or support, please open an issue on the [GitHub repository](https://github.com/walker84837/minechat-protocol).

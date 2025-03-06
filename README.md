@@ -18,7 +18,7 @@ MineChat is a Rust library designed to facilitate communication with a Minecraft
 To send a message to the server, use the `send_message` function:
 
 ```rust
-use minechat::{send_message, MineChatMessage};
+use minechat_protocol::{send_message, MineChatMessage};
 use tokio::net::TcpStream;
 
 #[tokio::main]
@@ -67,7 +67,7 @@ async fn main() {
 To handle linking with the server, use the `handle_link` function:
 
 ```rust
-use minechat::handle_link;
+use minechat_protocol::handle_link;
 
 #[tokio::main]
 async fn main() {

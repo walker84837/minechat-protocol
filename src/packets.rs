@@ -55,8 +55,8 @@ where
 /// * `code` - The link code to authenticate with the server.
 ///
 /// # Returns
-/// * `Result<(String, String), MineChatError>` - Returns a tuple containing the server address and
-///   client UUID if linking is successful, otherwise returns an error.
+/// * `Result<(String, String), MineChatError>` - Returns a tuple containing the client UUID and
+///   server address if linking is successful, otherwise returns an error.
 pub async fn link_with_server(
     server_addr: impl AsRef<str>,
     code: impl AsRef<str>,
@@ -100,7 +100,7 @@ pub async fn handle_link(server_addr: &str, code: &str) -> Result<(String, Strin
                 return Err(MineChatError::AuthFailed(payload.message));
             }
             info!("Linked successfully: {}", payload.message);
-            Ok((server_addr.to_string(), client_uuid))
+            Ok((client_uuid, server_addr.to_string()))
         }
         _ => Err(MineChatError::AuthFailed("Unexpected response".into())),
     }

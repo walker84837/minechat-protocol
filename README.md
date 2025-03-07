@@ -1,5 +1,7 @@
 # MineChat protocol
 
+[![Rust](https://github.com/walker84837/minechat-protocol/actions/workflows/rust.yml/badge.svg)](https://github.com/walker84837/minechat-protocol/actions/workflows/rust.yml)
+
 MineChat is a Rust library designed to facilitate communication with a Minecraft chat server. It provides asynchronous functions to send and receive messages, handle authentication, and manage connections.
 
 ## Features

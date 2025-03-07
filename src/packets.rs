@@ -1,5 +1,5 @@
 use crate::protocol::*;
-use log::info;
+use log::trace;
 use tokio::{
     io::{AsyncBufRead, AsyncBufReadExt, AsyncWrite, AsyncWriteExt, BufReader},
     net::TcpStream,
@@ -21,9 +21,9 @@ pub async fn send_message<W>(writer: &mut W, msg: &MineChatMessage) -> Result<()
 where
     W: AsyncWrite + Unpin,
 {
-    info!("Serializing message {:?}", msg);
+    trace!("Serializing message {:?}", msg);
     let json = serde_json::to_string(msg)? + "\n";
-    info!("Sending message to server");
+    trace!("Sending message to server");
     writer.write_all(json.as_bytes()).await?;
     Ok(())
 }
@@ -73,16 +73,16 @@ pub async fn link_with_server(
 #[deprecated(since = "0.1.1", note = "use link_with_server instead")]
 pub async fn handle_link(server_addr: &str, code: &str) -> Result<(String, String), MineChatError> {
     let client_uuid = Uuid::new_v4().to_string();
-    info!("Connecting to server {}", server_addr);
+    trace!("Connecting to server {}", server_addr);
 
     let mut stream = TcpStream::connect(server_addr).await?;
     let (reader, mut writer) = stream.split();
 
-    info!("Connected to server");
+    trace!("Connected to server");
 
     let mut reader = BufReader::new(reader);
 
-    info!("Sending message to server {}", server_addr);
+    trace!("Sending message to server {}", server_addr);
     send_message(
         &mut writer,
         &MineChatMessage::Auth {
@@ -99,7 +99,7 @@ pub async fn handle_link(server_addr: &str, code: &str) -> Result<(String, Strin
             if payload.status != "success" {
                 return Err(MineChatError::AuthFailed(payload.message));
             }
-            info!("Linked successfully: {}", payload.message);
+            trace!("Linked successfully: {}", payload.message);
             Ok((client_uuid, server_addr.to_string()))
         }
         _ => Err(MineChatError::AuthFailed("Unexpected response".into())),

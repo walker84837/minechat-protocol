@@ -1,37 +1,22 @@
 use crate::protocol::*;
-use log::{error, info};
-use miette::Diagnostic;
-use thiserror::Error;
+use log::info;
 use tokio::{
-    io::{self, AsyncBufRead, AsyncBufReadExt, AsyncWrite, AsyncWriteExt, BufReader},
+    io::{AsyncBufRead, AsyncBufReadExt, AsyncWrite, AsyncWriteExt, BufReader},
     net::TcpStream,
 };
 use uuid::Uuid;
 
-#[derive(Debug, Error, Diagnostic)]
-pub enum MineChatError {
-    #[error("I/O error: {0}")]
-    Io(#[from] io::Error),
-
-    #[error("Serde error: {0}")]
-    Serde(#[from] serde_json::Error),
-
-    #[error("Server not linked")]
-    ServerNotLinked,
-
-    #[error("Config error: {0}")]
-    ConfigError(String),
-
-    #[error("Authentication failed: {0}")]
-    AuthFailed(String),
-
-    #[error("UUID error: {0}")]
-    Uuid(#[from] uuid::Error),
-
-    #[error("Disconnected")]
-    Disconnected,
-}
-
+/// Sends a message to the server.
+///
+/// # Arguments
+///
+/// * `writer` - A mutable reference to an asynchronous writer.
+/// * `msg` - A reference to the message to be sent.
+///
+/// # Returns
+///
+/// * `Result<(), MineChatError>` - Returns `Ok(())` if the message is sent successfully, otherwise
+///   returns an error.
 pub async fn send_message<W>(writer: &mut W, msg: &MineChatMessage) -> Result<(), MineChatError>
 where
     W: AsyncWrite + Unpin,
@@ -43,6 +28,16 @@ where
     Ok(())
 }
 
+/// Receives a message from the server.
+///
+/// # Arguments
+///
+/// * `reader` - A mutable reference to an asynchronous reader.
+///
+/// # Returns
+///
+/// * `Result<MineChatMessage, MineChatError>` - Returns the received message if successful,
+///   otherwise returns an error.
 pub async fn receive_message<R>(reader: &mut R) -> Result<MineChatMessage, MineChatError>
 where
     R: AsyncBufRead + Unpin,
@@ -52,6 +47,30 @@ where
     Ok(serde_json::from_str(&line)?)
 }
 
+/// Handles linking with the server.
+///
+/// # Arguments
+///
+/// * `server_addr` - The address of the server to connect to.
+/// * `code` - The link code to authenticate with the server.
+///
+/// # Returns
+/// * `Result<(String, String), MineChatError>` - Returns a tuple containing the server address and
+///   client UUID if linking is successful, otherwise returns an error.
+pub async fn link_with_server(
+    server_addr: impl AsRef<str>,
+    code: impl AsRef<str>,
+) -> Result<(String, String), MineChatError> {
+    let addr = server_addr.as_ref();
+    let link_code = code.as_ref();
+
+    handle_link(addr, link_code).await
+}
+
+/// Handles linking with the server. The same as link_with_server.
+///
+/// Deprecated, use link_with_server instead, as it has a more descriptive and self-explaining name.
+#[deprecated(since = "0.1.1", note = "use link_with_server instead")]
 pub async fn handle_link(server_addr: &str, code: &str) -> Result<(String, String), MineChatError> {
     let client_uuid = Uuid::new_v4().to_string();
     info!("Connecting to server {}", server_addr);

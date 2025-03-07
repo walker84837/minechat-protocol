@@ -91,6 +91,10 @@ This project is licensed under the MPL-2.0 License. See the [LICENSE](LICENSE) f
 
 Contributions are welcome! Please open an issue or submit a pull request.
 
+### Roadmap
+
+- [ ] Expose a synchronous API.
+
 ## Contact
 
 For any questions or support, please open an issue on the [GitHub repository](https://github.com/walker84837/minechat-protocol).
